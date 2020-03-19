@@ -57,7 +57,7 @@ namespace lab2_Schrage
         public void PrintRPQ()
         {
             System.Console.WriteLine("R P Q");
-            Console.WriteLine("n: " + this.n);
+            Console.WriteLine("n:" + this.n);
             for (int i = 0; i < n; i++)
             {
                 System.Console.Write(tasks[i].r);
@@ -70,15 +70,17 @@ namespace lab2_Schrage
         }
 
         /// <summary>
-        /// Algorytm schrage korzystający z kolejek priorytetowych, zwraca optymalny termin dostarczenia zadań
+        /// Algorytm schrage bez podziału, korzystający z kolejek priorytetowych
+        /// Wylicza permutacje zadań na maszynie
         /// </summary>
+        /// <returns>Maksymalny czas dostarczenia zadań</returns>
         public int Schrage()
         {
             int t = 0; // chwila czasowa
             int k = 0; // pozycja w permutacji pi
             var G = new MaxPriorityQueue(); // zbiór zadań gotowych do realizacji
             var N = new MinPriorityQueue(tasks); // zbiór zadań nieuszeregowanych
-            Task element;
+            Task element; // zadanie gotowe do wykonania
 
             //Szukane
             var cmax = 0; // maksymalny z terminów dostarczenia zadań
@@ -104,6 +106,62 @@ namespace lab2_Schrage
                     k += 1; // zwiększ pozycję w permutacji
                     t += element.p; // zwiększ chwilę czasową o czas wykonania zadania - p
                     cmax = Math.Max(cmax, t + element.q); // oblicz najpóźniejszy moment dostarczenia
+            }
+            return cmax;
+        }
+
+        /// <summary>
+        /// Algorytm schrage z podziałem korzystający z kolejek priorytetowych
+        /// Nie wylicza permutacji zadań na maszynie
+        /// </summary>
+        /// <returns>Maksymalny termin dostarczenia zadań</returns>
+        public int SchrageWithDivision()
+        {
+            var t = 0; // chwila czasowa
+            var G = new MaxPriorityQueue(); // kolejka zadań gotowych do wykonania
+            var N = new MinPriorityQueue(tasks); // kolejka zadań nieuszeregowanych
+            Task taskReady; // zadanie gotowe do wykonania
+            Task taskOnMachine = new Task{q=int.MaxValue}; // aktualnie wykonywane zadanie na maszynie
+            
+            //szukane
+            var cmax = 0; // maksymalny termin dostarczenia
+
+
+            while (!G.IsEmpty() || !N.IsEmpty())
+            {
+                while (!N.IsEmpty() && N.Peek().r <= t)
+                {
+                    taskReady = N.Poll(); // zadanie gotowe do wykonania
+                    G.Add(taskReady); // dodaj to zadanie do kolejki zadań gotowych do wykonania
+
+                    //wprowadzenie podziału
+                    //jeśli czas dostarczenia zadania gotowego do realizacji jest dłuższy 
+                    //od zadania aktualnie znajdującego się na maszynie
+                    if (taskReady.q > taskOnMachine.q)
+                    {
+                        taskOnMachine.p = t - taskReady.r; // wykonuj do zadanie do momentu, gdy następne zadanie jest gotowe
+                        t = taskReady.r;
+                        //  jeżeli do momentu aż zadanie będzie gotowe poprzednie się nie skończy
+                        // to dodaj to zadanie do kolejki zadań gotowych do realizacji
+                        // z p -> czasem wykonania, krótszym o tyle ile się zdążyło wykonać
+                        if (taskOnMachine.p > 0) 
+                        {
+                            G.Add(taskOnMachine);
+                        }
+                    }
+                }
+
+                if (G.IsEmpty())
+                {
+                    t = N.Peek().r;
+                }
+                else
+                {
+                    taskReady = G.Poll();
+                    taskOnMachine = taskReady;
+                    t = t + taskReady.p;
+                    cmax = Math.Max(cmax, t + taskReady.q);
+                }
             }
             return cmax;
         }
