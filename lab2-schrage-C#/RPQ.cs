@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -70,6 +71,116 @@ namespace lab2_Schrage
         }
 
         /// <summary>
+        /// Algorytm schrage bez podziału zaimplementowany z wykorzystaniem list, bez użycia kolejki priorytetowej
+        /// Złożoność obliczeniowa O(n^2)
+        /// </summary>
+        /// <returns>Maskymalną wartość dostarczenia zadania</returns>
+        public int SchrageWithoutQueue()
+        {
+            int t = 0; // chwila czasowa
+            var G = new List<Task>(); // zbiór zadań gotowych do realizacji
+            var N = new List<Task>(); //zbiór zadań nieuszeregowanych
+
+            foreach (var task in tasks)
+                N.Add(task);
+
+            //Szukane
+            var cmax = 0; // maksymalny z terminów dostarczenia zadań
+            var pi = new List<Task>(); // permutacja wykonania zadań na maszynie
+
+
+            while (!G.Count.Equals(0) || !N.Count.Equals(0))
+            {
+                Task taskReady; // zadanie gotowe do wykonania
+                while (!N.Count.Equals(0) && N.Min(x=>x.r) <= t) // dopóki są jakieś nieuszeregowane zadania i jest dostępne zadanie w chwili czasowej t
+                {
+                    taskReady = N.First(x =>x.r.Equals(N.Min(x => x.r))); // weź zadanie z najmniejszym możliwym r, usuń je ze zbioru zadań nieuszeregowanych
+                    G.Add(taskReady); // dodaj to zadanie do zbioru zadań uszeregowanych
+                    N.Remove(taskReady); // usuń to zadanie ze zbioru zadań nieuszeregowanych
+                }
+
+                if (G.Count.Equals(0)) // jeśli nie ma żadnych zadań gotowych do realizacji
+                {
+                    t = N.First(x=>x.r.Equals(N.Min(x=>x.r))).r; // przesuń chwilę czasową do najmniejszego dostępnego terminu dostępności zadania ze zbioru zadań nieuszeregowanych
+                }
+                else // jeżeli są jakieś zadania gotowe do realizacji
+                {
+                    taskReady = G.First(x => x.q.Equals(G.Max(x => x.q))); // weź zadanie z największym możliwym q, usuń je ze zbioru zadań gotowych do realizacji i "wstaw je na maszynę" - do permutacji pi
+                    G.Remove(taskReady);
+                    pi.Add(taskReady); // dodaj to zadanie do permutacji zadań wykonywanych na maszynie
+                    t += taskReady.p; // zwiększ chwilę czasową o czas wykonania zadania - p
+                    cmax = Math.Max(cmax, t + taskReady.q); // oblicz najpóźniejszy moment dostarczenia
+                }
+            }
+            return cmax;
+        }
+
+        /// <summary>
+        /// Algorytm schrage z podziałem zaimplementowany z wykorzystaniem list
+        /// Złożoność obliczeniowa O(n^2)
+        /// </summary>
+        /// <returns>Maksymalna wartość terminu dostarczenia</returns>
+        public int SchrageWithoutQueueWithDivision()
+        {
+            int t = 0; // chwila czasowa
+            var G = new List<Task>(); // zbiór zadań gotowych do realizacji
+            var N = new List<Task>(); //zbiór zadań nieuszeregowanych
+
+            Task taskReady; // zadanie gotowe do wykonania
+            Task taskOnMachine = new Task{q = int.MaxValue}; // zadanie gotowe do wykonania
+
+            foreach (var task in tasks)
+                N.Add(task);
+
+            //Szukane
+            var cmax = 0; // maksymalny z terminów dostarczenia zadań
+
+
+            while (!G.Count.Equals(0) || !N.Count.Equals(0))
+            {
+                
+
+                while (!N.Count.Equals(0) && N.Min(x => x.r) <= t) // dopóki są jakieś nieuszeregowane zadania i jest dostępne zadanie w chwili czasowej t
+                {
+                    taskReady = N.First(x => x.r.Equals(N.Min(x => x.r))); // weź zadanie z najmniejszym możliwym r, usuń je ze zbioru zadań nieuszeregowanych
+                    G.Add(taskReady); // dodaj to zadanie do zbioru zadań uszeregowanych
+                    N.Remove(taskReady); // usuń to zadanie ze zbioru zadań nieuszeregowanych
+
+                    //wprowadzenie podziału
+                    //jeśli czas dostarczenia zadania gotowego do realizacji jest dłuższy 
+                    //od zadania aktualnie znajdującego się na maszynie
+                    if (taskReady.q > taskOnMachine.q)
+                    {
+                        taskOnMachine.p = t - taskReady.r; // wykonuj do zadanie do momentu, gdy następne zadanie jest gotowe
+                        t = taskReady.r;
+                        //  jeżeli do momentu aż zadanie będzie gotowe poprzednie się nie skończy
+                        // to dodaj to zadanie do kolejki zadań gotowych do realizacji
+                        // z p -> czasem wykonania, krótszym o tyle ile się zdążyło wykonać
+                        if (taskOnMachine.p > 0)
+                        {
+                            G.Add(taskOnMachine);
+                        }
+                    }
+                }
+
+                if (G.Count.Equals(0)) // jeśli nie ma żadnych zadań gotowych do realizacji
+                {
+                    t = N.First(x => x.r.Equals(N.Min(x => x.r))).r; // przesuń chwilę czasową do najmniejszego dostępnego terminu dostępności zadania ze zbioru zadań nieuszeregowanych
+                }
+                else // jeżeli są jakieś zadania gotowe do realizacji
+                {
+                    taskReady = G.First(x => x.q.Equals(G.Max(x => x.q))); // weź zadanie z największym możliwym q, usuń je ze zbioru zadań gotowych do realizacji i "wstaw je na maszynę" - do permutacji pi
+                    G.Remove(taskReady);
+                    taskOnMachine = taskReady;
+                    t += taskReady.p; // zwiększ chwilę czasową o czas wykonania zadania - p
+                    cmax = Math.Max(cmax, t + taskReady.q); // oblicz najpóźniejszy moment dostarczenia
+                }
+            }
+            return cmax;
+        }
+
+
+        /// <summary>
         /// Algorytm schrage bez podziału, korzystający z kolejek priorytetowych
         /// Wylicza permutacje zadań na maszynie
         /// </summary>
@@ -80,7 +191,6 @@ namespace lab2_Schrage
             int k = 0; // pozycja w permutacji pi
             var G = new MaxPriorityQueue(); // zbiór zadań gotowych do realizacji
             var N = new MinPriorityQueue(tasks); // zbiór zadań nieuszeregowanych
-            Task element; // zadanie gotowe do wykonania
 
             //Szukane
             var cmax = 0; // maksymalny z terminów dostarczenia zadań
@@ -89,10 +199,11 @@ namespace lab2_Schrage
 
             while (!G.IsEmpty() || !N.IsEmpty())
             {
+                Task taskReady; // zadanie gotowe do wykonania
                 while (!N.IsEmpty() && N.Peek().r <= t) // dopóki są jakieś nieuszeregowane zadania i jest dostępne zadanie w chwili czasowej t
                 {
-                    element = N.Poll(); // weź zadanie z najmniejszym możliwym r, usuń je ze zbioru zadań nieuszeregowanych
-                    G.Add(element); // dodaj to zadanie do zbioru zadań uszeregowanych
+                    taskReady = N.Poll(); // weź zadanie z najmniejszym możliwym r, usuń je ze zbioru zadań nieuszeregowanych
+                    G.Add(taskReady); // dodaj to zadanie do zbioru zadań uszeregowanych
                 }
 
                 if (G.IsEmpty()) // jeśli nie ma żadnych zadań gotowych do realizacji
@@ -100,12 +211,12 @@ namespace lab2_Schrage
                     t = N.Peek().r; // przesuń chwilę czasową do najmniejszego dostępnego terminu dostępności zadania ze zbioru zadań nieuszeregowanych
                     continue;
                 }
-                 // jeżeli są jakieś zadania gotowe do realizacji
-                    element = G.Poll(); // weź zadanie z największym możliwym q, usuń je ze zbioru zadań gotowych do realizacji i "wstaw je na maszynę" - do permutacji pi
-                    pi[k] = element; // dodaj to zadanie do permutacji zadań wykonywanych na maszynie
-                    k += 1; // zwiększ pozycję w permutacji
-                    t += element.p; // zwiększ chwilę czasową o czas wykonania zadania - p
-                    cmax = Math.Max(cmax, t + element.q); // oblicz najpóźniejszy moment dostarczenia
+                // jeżeli są jakieś zadania gotowe do realizacji
+                taskReady = G.Poll(); // weź zadanie z największym możliwym q, usuń je ze zbioru zadań gotowych do realizacji i "wstaw je na maszynę" - do permutacji pi
+                pi[k] = taskReady; // dodaj to zadanie do permutacji zadań wykonywanych na maszynie
+                k += 1; // zwiększ pozycję w permutacji
+                t += taskReady.p; // zwiększ chwilę czasową o czas wykonania zadania - p
+                cmax = Math.Max(cmax, t + taskReady.q); // oblicz najpóźniejszy moment dostarczenia
             }
             return cmax;
         }

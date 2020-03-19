@@ -156,7 +156,6 @@ namespace lab2_Schrage
         /// <param name="item"></param>
         public bool Remove(Task element)
         {
-            var index = 0;
 
             for (int i = 0; i < size; i++)
             {
