@@ -15,18 +15,24 @@ namespace lab2_Schrage
         /// <param name="number"></param>
         public RPQ(int number)
         {
-            this.number = number; 
+            this.number = number;
 
-            string[] text = File.ReadAllLines(@"..\..\..\data\SCHRAGE" + this.number + ".DAT"); //cały text z pliku
-            n = int.Parse(text[0]);
+            //string[] text = File.ReadAllLines(@"..\..\..\data\SCHRAGE" + this.number + ".DAT"); //cały text z pliku
 
-            tasks = new Task[n+1];
+            StreamReader file = new StreamReader(@"..\..\..\data\SCHRAGE" + this.number + ".DAT");
+            var line = file.ReadLine();
 
-            tasks[0] = new Task { r = 0, p = 0, q = 0};
+            n = int.Parse(line);
 
-            for (int i = 1; i < n+1; i++)
+
+            tasks = new Task[n];
+
+            //tasks[0] = new Task { r = 0, p = 0, q = 0 };
+
+            for (int i = 0; i < n; i++)
             {
-                var entries = text[i].Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+                line = file.ReadLine();
+                var entries = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
                 var r = int.Parse(entries[0]);
                 var p = int.Parse(entries[1]);
                 var q = int.Parse(entries[2]);
@@ -35,7 +41,7 @@ namespace lab2_Schrage
             }
 
             string[] fileAnwser = File.ReadAllLines(@"..\..\..\data\SCHRAGE" + number + ".OUT");
-            
+
             anwser = int.Parse(fileAnwser[0]);
         }
 
@@ -51,8 +57,8 @@ namespace lab2_Schrage
         public void PrintRPQ()
         {
             System.Console.WriteLine("R P Q");
-
-            for (int i = 0; i < n + 1; i++)
+            Console.WriteLine("n: " + this.n);
+            for (int i = 0; i < n; i++)
             {
                 System.Console.Write(tasks[i].r);
                 System.Console.Write(" ");
@@ -72,34 +78,33 @@ namespace lab2_Schrage
             int k = 0; // pozycja w permutacji pi
             var G = new MaxPriorityQueue(); // zbiór zadań gotowych do realizacji
             var N = new MinPriorityQueue(tasks); // zbiór zadań nieuszeregowanych
+            Task element;
 
             //Szukane
             var cmax = 0; // maksymalny z terminów dostarczenia zadań
-            var pi = new Task[n + 1]; // permutacja wykonania zadań na maszynie
+            var pi = new Task[n]; // permutacja wykonania zadań na maszynie
 
 
             while (!G.IsEmpty() || !N.IsEmpty())
             {
                 while (!N.IsEmpty() && N.Peek().r <= t) // dopóki są jakieś nieuszeregowane zadania i jest dostępne zadanie w chwili czasowej t
                 {
-                    var element = N.Poll(); // weź zadanie z najmniejszym możliwym r, usuń je ze zbioru zadań nieuszeregowanych
+                    element = N.Poll(); // weź zadanie z najmniejszym możliwym r, usuń je ze zbioru zadań nieuszeregowanych
                     G.Add(element); // dodaj to zadanie do zbioru zadań uszeregowanych
                 }
 
                 if (G.IsEmpty()) // jeśli nie ma żadnych zadań gotowych do realizacji
                 {
                     t = N.Peek().r; // przesuń chwilę czasową do najmniejszego dostępnego terminu dostępności zadania ze zbioru zadań nieuszeregowanych
+                    continue;
                 }
-                else // jeżeli są jakieś zadania gotowe do realizacji
-                {
-                    var element = G.Poll(); // weź zadanie z największym możliwym q, usuń je ze zbioru zadań gotowych do realizacji i "wstaw je na maszynę" - do permutacji pi
+                 // jeżeli są jakieś zadania gotowe do realizacji
+                    element = G.Poll(); // weź zadanie z największym możliwym q, usuń je ze zbioru zadań gotowych do realizacji i "wstaw je na maszynę" - do permutacji pi
                     pi[k] = element; // dodaj to zadanie do permutacji zadań wykonywanych na maszynie
                     k += 1; // zwiększ pozycję w permutacji
                     t += element.p; // zwiększ chwilę czasową o czas wykonania zadania - p
                     cmax = Math.Max(cmax, t + element.q); // oblicz najpóźniejszy moment dostarczenia
-                }
             }
-
             return cmax;
         }
     }

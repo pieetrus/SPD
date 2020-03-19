@@ -9,7 +9,7 @@ namespace lab2_Schrage
     /// </summary>
     public class MaxPriorityQueue
     {
-        private static int capacity = 10;
+        private static int capacity = 100;
         private int size = 0;
 
         Task[] items = new Task[capacity];

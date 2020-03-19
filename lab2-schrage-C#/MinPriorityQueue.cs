@@ -11,12 +11,13 @@ namespace lab2_Schrage
     {
         public MinPriorityQueue(Task[] tasks)
         {
-            items = tasks;
-            capacity = tasks.Length;
-            size = tasks.Length;
+            foreach (var task in tasks)
+            {
+                Add(task);
+            }
         }
 
-        private static int capacity = 10;
+        private static int capacity = 100;
         private int size = 0;
 
         Task[] items = new Task[capacity];

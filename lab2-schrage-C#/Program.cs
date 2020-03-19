@@ -17,7 +17,7 @@ namespace lab2_Schrage
 
                 Console.WriteLine("{0,3} {1,8} {2,8}", i, myAnwser, fileAnwser);
             }
-
+            Console.ReadKey();
         }
     }
 }
