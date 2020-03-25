@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace lab2_Schrage
+﻿namespace lab2_Schrage
 {
     /// <summary>
     /// Klasa przechowująca dane na temat zadania
