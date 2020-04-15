@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Carlier
 {
@@ -7,55 +6,55 @@ namespace Carlier
     {
         static void Main(string[] args)
         {
-            var rpq = new RPQ(3);
-            var pi = new Task[rpq.n];
-            var tasks = rpq.tasks;
-            rpq.Schrage(pi);
+            var taskNumber = 3;
+
+            for (int i = 1; i < 9; i++)
+            {
+                var rpq = new RPQ(i);
+                var pi = new Task[rpq.n];
+                var tasks = rpq.tasks;
+                rpq.Schrage(pi);
+
+                var b = rpq.GetB(pi);
+                var a = rpq.GetA(pi, b);
+                var c = rpq.GetC(pi, a, b);
+                var k = rpq.GetK(pi, b, c);
+
+                var r = k.Min(x => x.r);
+                var q = k.Min(x => x.q);
+                var p = k.Sum(task => task.p);
+                if (c == -1)
+                {
+                    System.Console.WriteLine("-------------");
+                    System.Console.WriteLine(i);
+                    System.Console.WriteLine("-------------");
+                    System.Console.WriteLine("b : " + b);
+                    System.Console.WriteLine("a : " + a);
+                }
+                else
+                {
+                    System.Console.WriteLine("-------------");
+                    System.Console.WriteLine(i);
+                    System.Console.WriteLine("-------------");
+                    System.Console.WriteLine("b : " + b);
+                    System.Console.WriteLine("a : " + a);
+                    System.Console.WriteLine("c : " + c);
+                    System.Console.WriteLine("r : " + r);
+                    System.Console.WriteLine("p : " + p);
+                    System.Console.WriteLine("q : " + q);
+                }
+                
+            }
+
             
-            var b = rpq.GetB(pi);
-            var a = rpq.GetA(pi,b);
-            var c = rpq.GetC(pi,a, b);
-            var k = rpq.GetK(pi, b, c);
 
 
 
-            //Console.WriteLine("B:(index):  " + b);
-            //Console.WriteLine("B:(wartość d):  " + tasks[b].d);
-            //Console.WriteLine("B:(wartość c):  " + tasks[b].c);
-            //Console.WriteLine("B:(wartość r):  " + tasks[b].r);
-            //Console.WriteLine("B:(wartość p):  " + tasks[b].p);
-            //Console.WriteLine("B:(wartość q):  " + tasks[b].q);
 
-            //Console.WriteLine();
-            //Console.WriteLine("A:(index):  " + a);
-            //Console.WriteLine("A:(wartość d):  " + tasks[a].d);
-            //Console.WriteLine("A:(wartość c):  " + tasks[a].c);
-            //Console.WriteLine("A:(wartość r):  " + tasks[a].r);
-            //Console.WriteLine("A:(wartość p):  " + tasks[a].p);
-            //Console.WriteLine("A:(wartość q):  " + tasks[a].q);
 
-            //Console.WriteLine();
-            //Console.WriteLine("C:(index):  " + c);
-            //Console.WriteLine("C:(wartość d):  " + tasks[c].d);
-            //Console.WriteLine("C:(wartość c):  " + tasks[c].c);
-            //Console.WriteLine("C:(wartość r):  " + tasks[c].r);
-            //Console.WriteLine("C:(wartość p):  " + tasks[c].p);
-            //Console.WriteLine("C:(wartość q):  " + tasks[c].q);
 
-            //Console.WriteLine("hehe");
-            //Console.WriteLine("hehe");
-            //Console.WriteLine("hehe");
 
-            //foreach (var item in k)
-            //{
-            //    Console.WriteLine(item.d);
-            //}
 
-            //var xd = rpq.Carlier();
-
-            //Console.WriteLine(xd.Max(x=>x.d));
-
-            Test.Run();
 
 
         }
