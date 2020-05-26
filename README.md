@@ -1,4 +1,4 @@
-# Sterowanie Procesami dyskretnymi
+# Sterowanie Procesami Dyskretnymi
 
 # Table of Contents
   *  [Algorytm Jacksona](https://github.com/pieetrus/SPD/tree/master/jackson-python)
@@ -6,7 +6,8 @@
   *  [Algorytm WiTi](https://github.com/pieetrus/SPD/tree/master/witi-python)
   *  [Algorytm Carliera](https://github.com/pieetrus/SPD/tree/master/carlier-python)
   *  [Algorytm NEH](https://github.com/pieetrus/SPD/tree/master/neh-python)
-
+  *  [Problem Gniazdowy](https://github.com/pieetrus/SPD/tree/master/job-shop-python)
+  
 ## Technologies
 - Python
 - C#
