@@ -161,30 +161,30 @@ def findRPQprim(lst, b, c):
     return rprim, pprim, qprim
 
 def carlier(lst):
-    lst, Cmax, b = schrage(copy.deepcopy(lst))
-    a = findA(lst, b, Cmax)
-    c = findC(lst, a, b)
-    if not c:
+    lst, Cmax, b = schrage(copy.deepcopy(lst)) # lst - permutacja zadań, C-max - górne oszacowanie, b - pozycja ostatniego w ścieżce krytycznej
+    a = findA(lst, b, Cmax) # pozycja pierwszego zadania w ścieżce krytycznej
+    c = findC(lst, a, b) # zadanie o jak najwyższej pozycji ale z mniejszym q_pi_j < q_pi_b
+    if not c: # jeśli nie znaleziono takiego to c_max jest roziwązaniem optymalnym
         return Cmax
 
-    rprim, pprim, qprim = findRPQprim(lst, b, c)
-    r_saved = lst[c][0]
-    lst[c][0] = max(lst[c][0], rprim + pprim)
-    LB = schrage_div(copy.deepcopy(lst))
+    rprim, pprim, qprim = findRPQprim(lst, b, c) # min r, max q, suma czasów wykonania zadań - w bloku (c+1, b)
+    r_saved = lst[c][0] # zapisz r
+    lst[c][0] = max(lst[c][0], rprim + pprim) # modyfikacja terminu dostępności zadania c, wymusi to jego późniejszą realizację, za wszystkimi zadaniami w bloku(c+1, b)
+    LB = schrage_div(copy.deepcopy(lst)) # sprawdzamy dolne ograniczenie schrage z podziałem  - dla wszystkich permutacji spełniających to wymaganie
 
-    if LB < Cmax:
-        Cmax = min(Cmax, carlier(lst))
+    if LB < Cmax: # sprawdź czy rozwiązanie jest obiecujące
+        Cmax = min(Cmax, carlier(lst)) # wywołaj carliera jeszcze raz dla nowego problemu
 
-    lst[c][0] = r_saved
+    lst[c][0] = r_saved # odtwórz r
 
     q_saved = lst[c][2]
-    lst[c][2] = max(lst[c][2], qprim + pprim)
-    LB = schrage_div(copy.deepcopy(lst))
+    lst[c][2] = max(lst[c][2], pprim + qprim) # wymuszenie aby zadanie c było wykonywane przed wszystkimi zadaniami w bloku (c+1, b)
+    LB = schrage_div(copy.deepcopy(lst)) # sprawdź czy taki problem jest obiecujący
 
     if LB < Cmax:
         Cmax = min(Cmax, carlier(lst))
 
-    lst[c][2] = q_saved
+    lst[c][2] = q_saved # przywróc q
 
     return Cmax
 
