@@ -1,0 +1,13 @@
+D:\REPO\SPD\neh\neh\bin\Debug\netcoreapp3.1\neh.exe
+D:\REPO\SPD\neh\neh\bin\Debug\netcoreapp3.1\neh.deps.json
+D:\REPO\SPD\neh\neh\bin\Debug\netcoreapp3.1\neh.runtimeconfig.json
+D:\REPO\SPD\neh\neh\bin\Debug\netcoreapp3.1\neh.runtimeconfig.dev.json
+D:\REPO\SPD\neh\neh\bin\Debug\netcoreapp3.1\neh.dll
+D:\REPO\SPD\neh\neh\bin\Debug\netcoreapp3.1\neh.pdb
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.csprojAssemblyReference.cache
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.csproj.CoreCompileInputs.cache
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.AssemblyInfoInputs.cache
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.AssemblyInfo.cs
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.dll
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.pdb
+D:\REPO\SPD\neh\neh\obj\Debug\netcoreapp3.1\neh.genruntimeconfig.cache

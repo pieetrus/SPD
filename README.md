@@ -5,7 +5,8 @@
   *  [Algorytm Schrage](https://github.com/pieetrus/SPD/tree/master/schrage-C%23)
   *  [Algorytm WiTi](https://github.com/pieetrus/SPD/tree/master/witi-python)
   *  [Algorytm Carliera](https://github.com/pieetrus/SPD/tree/master/carlier-python)
-  *  [Algorytm NEH](https://github.com/pieetrus/SPD/tree/master/neh-python)
+  *  [Algorytm NEH (Python)](https://github.com/pieetrus/SPD/tree/master/neh-python)
+  *  [Algorytm NEH (C#)](https://github.com/pieetrus/SPD/tree/master/neh-C%23)
   *  [Problem Gniazdowy](https://github.com/pieetrus/SPD/tree/master/job-shop-python)
   
 ## Technologies
